@@ -39,7 +39,7 @@ namespace Tarea1
         private void btnLoadText_Click(object sender, EventArgs e)
         {
             OpenFileDialog myOpener = new OpenFileDialog();
-            myOpener.Filter = "Text|*.txt|All|*.*";
+            myOpener.Filter = "Text|*.txt|*.*";
             Stream myStream;
         
             try
