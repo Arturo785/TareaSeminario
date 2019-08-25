@@ -110,10 +110,11 @@ namespace Tarea1
         {
             States myState = States.Start;
             string union = null;
+            int counter = 0;
 
 
-            foreach(char myChar in data){
-
+            while(counter < data.Length){
+                Char myChar = data[counter];
                 switch (myState)
                 {
                     case States.Start:
@@ -209,6 +210,22 @@ namespace Tarea1
 
                     case States.Number:
 
+                        if (Char.IsNumber(myChar)){
+                            union += myChar;
+                        }
+                        else if (myChar == '.')
+                        {
+                            union += myChar;
+                            myState = States.Point;
+                        }
+                        else
+                        {
+                            dataGridView1.Rows.Add(new string[] { union, "Entero", "id: " });
+                            union = null;
+                            counter--;
+                            myState = States.Start;
+                        }
+
                     break;
 
                     case States.Word:
@@ -217,15 +234,60 @@ namespace Tarea1
 
                     case States.Point:
 
+                        if (Char.IsNumber(myChar))
+                        {
+                            union += myChar;
+                            myState = States.Float;
+                        }
+
+                        else
+                        {
+                            dataGridView1.Rows.Add(new string[] { union, "error", "id:1" });
+                            union = null;
+                            myState = States.Start;
+                        }
+
                     break;
 
                     case States.Float:
 
-                    break;
+                        if (Char.IsNumber(myChar))
+                        {
+                            union += myChar;
+                        }
+
+                        else
+                        {
+                            dataGridView1.Rows.Add(new string[] { union, "float", "id:" });
+                            union = null;
+                            myState = States.Start;
+                            counter--;
+                        }
+
+                        break;
 
                     case States.GreaterThan:
 
-                    break;
+                        if(myChar == '=')
+                        {
+                            union += myChar;
+                            dataGridView1.Rows.Add(new string[] { union, "mayor igual", "id:" });                           
+                        }
+
+                        else if(Char.IsDigit(myChar) || Char.IsLetter(myChar))
+                        {
+                            dataGridView1.Rows.Add(new string[] { union, "mayor que", "id:" });                           
+                            counter--;
+                        }
+                        else
+                        {
+                            dataGridView1.Rows.Add(new string[] { union, "error", "id:1" });
+                        }
+
+                        union = null;
+                        myState = States.Start;
+
+                        break;
 
                     case States.Less:
 
