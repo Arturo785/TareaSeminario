@@ -274,13 +274,14 @@ namespace Tarea1
                             dataGridView1.Rows.Add(new string[] { union, "mayor igual", "id:" });                           
                         }
 
-                        else if(Char.IsDigit(myChar) || Char.IsLetter(myChar))
+                        else if(Char.IsLetterOrDigit(myChar) || Char.IsWhiteSpace(myChar))
                         {
                             dataGridView1.Rows.Add(new string[] { union, "mayor que", "id:" });                           
                             counter--;
                         }
                         else
                         {
+                            union += myChar;
                             dataGridView1.Rows.Add(new string[] { union, "error", "id:1" });
                         }
 
@@ -300,8 +301,10 @@ namespace Tarea1
                     case States.Or:
 
                     break;
+                   
 
                 }
+                counter++;
 
             }
             
