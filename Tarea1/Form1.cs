@@ -33,13 +33,13 @@ namespace Tarea1
             Or
         }
 
-        private List<String> reservedWords = new List<String>(new string[] { "if", " while ", " for", " switch ", " return ", " else " });
-        private List<String> Types = new List<String>(new string[] { " int" ," void " , " char " , " double " , " float " , " bool " });
+        private List<String> reservedWords = new List<String>(new string[] { "if", "while", "for", "switch", "return", "else" });
+        private List<String> Types = new List<String>(new string[] { "int" ,"void ", "char" , "double" , "float" , "bool" });
 
         private void btnLoadText_Click(object sender, EventArgs e)
         {
             OpenFileDialog myOpener = new OpenFileDialog();
-            myOpener.Filter = "Text|*.txt|*.*";
+            myOpener.Filter = "*.txt|*.*";
             Stream myStream;
         
             try
@@ -111,9 +111,12 @@ namespace Tarea1
             States myState = States.Start;
             string union = null;
             int counter = 0;
+            data = data.Insert(data.Length, "$ ");
+
+            
 
 
-            while(counter < data.Length){
+            while (counter < data.Length){
                 Char myChar = data[counter];
                 switch (myState)
                 {
@@ -206,6 +209,11 @@ namespace Tarea1
                             myState = States.Or;
                         }
 
+                        else if (myChar == '$')
+                        {
+                            dataGridView1.Rows.Add(new string[] { "$", "pesos", "id: 21" });
+                        }
+
                         break;
 
                     case States.Number:
@@ -229,6 +237,32 @@ namespace Tarea1
                     break;
 
                     case States.Word:
+
+                        if(Char.IsLetterOrDigit(myChar) || myChar == '_')
+                        {
+                            union += myChar;
+                        }
+
+                        else
+                        {
+                            if (reservedWords.Contains(union))
+                            {
+                                dataGridView1.Rows.Add(new string[] { union, "reservada", "id:" });
+                            }
+
+                            else if (Types.Contains(union))
+                            {
+                                dataGridView1.Rows.Add(new string[] { union, "tipo", "id:" });
+                            }
+                            else
+                            {
+                                dataGridView1.Rows.Add(new string[] { union, "identificador", "id:1" });
+                            }
+
+                            union = null;
+                            myState = States.Start;
+                            counter--;
+                        }
 
                     break;
 
@@ -292,25 +326,133 @@ namespace Tarea1
 
                     case States.Less:
 
-                    break;
+                        if (myChar == '=')
+                        {
+                            union += myChar;
+                            dataGridView1.Rows.Add(new string[] { union, "menor igual", "id:" });
+                        }
+
+                        else if (Char.IsLetterOrDigit(myChar) || Char.IsWhiteSpace(myChar))
+                        {
+                            dataGridView1.Rows.Add(new string[] { union, "menor que", "id:" });
+                            counter--;
+                        }
+                        else
+                        {
+                            union += myChar;
+                            dataGridView1.Rows.Add(new string[] { union, "error", "id:1" });
+                        }
+
+                        union = null;
+                        myState = States.Start;
+
+                        break;
 
                     case States.And:
 
-                    break;
+                        if (myChar == '&')
+                        {
+                            union += myChar;
+                            dataGridView1.Rows.Add(new string[] { union, "and", "id:19" });
+                        }
+                        else
+                        {
+                            dataGridView1.Rows.Add(new string[] { union, "error", "id:1" });
+                            counter--;
+                        }
+                        union = null;
+                        myState = States.Start;
+
+                        break;
 
                     case States.Or:
 
-                    break;
+                        if (myChar == '|')
+                        {
+                            union += myChar;
+                            dataGridView1.Rows.Add(new string[] { union, "or", "id:20" });
+                        }
+                        else
+                        {
+                            dataGridView1.Rows.Add(new string[] { union, "error", "id:1" });
+                            counter--;
+                        }
+                        union = null;
+                        myState = States.Start;
+
+                        break;
+
+                    case States.Equal:
+
+                        if(myChar == '=')
+                        {
+                            union += myChar;
+                            dataGridView1.Rows.Add(new string[] { union, "comparacion", "id:18" });
+                        }
+
+                        else
+                        {
+                            dataGridView1.Rows.Add(new string[] { union, "asignacion", "id:8" });
+                        }
+
+                        union = null;
+                        myState = States.Start;
+                        break;
                    
 
                 }
                 counter++;
 
             }
+            if(union != null)
+            {
+                checkLastIteration(union);
+            }
+            txtBoxFirst.Text = data;
             
             
-            
-            
+        }
+
+        private void checkLastIteration(string residue)
+        {
+            bool num, word, point;
+            num = word = point = false;
+
+            foreach(char myChar in residue)
+            {
+                if (Char.IsNumber(myChar)) { num = true; }
+
+                else if (Char.IsLetter(myChar)) { word = true; }
+
+                if (myChar == '.' ){ point = true; }
+            }
+
+            if (word)
+            {
+                if (reservedWords.Contains(residue)){
+                    dataGridView1.Rows.Add(new string[] { residue, "reservada", "id:" });
+                }
+
+                else if (Types.Contains(residue))
+                {
+                    dataGridView1.Rows.Add(new string[] { residue, "tipo", "id:" });
+                }
+                else
+                {
+                    dataGridView1.Rows.Add(new string[] { residue, "identificador", "id:1" });
+                }
+            }
+            else if (!word)
+            {
+                if (point)
+                {
+                    dataGridView1.Rows.Add(new string[] { residue, "float", "id:" });
+                }
+                else
+                {
+                    dataGridView1.Rows.Add(new string[] { residue, "int", "id:" });
+                }
+            }
         }
     }
 }
