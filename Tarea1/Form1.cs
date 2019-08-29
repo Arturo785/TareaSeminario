@@ -30,10 +30,11 @@ namespace Tarea1
             GreaterThan,
             Less,
             And,
-            Or
+            Or,
+            Different
         }
 
-        private List<String> reservedWords = new List<String>(new string[] { "if", "while", "for", "switch", "return", "else" });
+        private List<String> reservedWords = new List<String>(new string[] { "if", "while", "for", "switch", "return", "else","main" });
         private List<String> Types = new List<String>(new string[] { "int" ,"void ", "char" , "double" , "float" , "bool" });
 
         private void btnLoadText_Click(object sender, EventArgs e)
@@ -108,13 +109,18 @@ namespace Tarea1
 
         private void evaluateCharacter(string data)
         {
+            if(data == "")
+            {
+                return;
+            }
+
             States myState = States.Start;
             string union = null;
             int counter = 0;
-            data = data.Insert(data.Length, "$ ");
 
+            data = data.Insert(data.Length, "$");
             
-
+      
 
             while (counter < data.Length){
                 Char myChar = data[counter];
@@ -132,6 +138,12 @@ namespace Tarea1
                         {
                             union += myChar;
                             myState = States.Number;
+                        }
+
+                        else if (myChar == '!')
+                        {
+                            union += myChar;
+                            myState = States.Different;
                         }
 
                         else if (myChar == '{')
@@ -157,6 +169,11 @@ namespace Tarea1
                         else if (myChar == ';')
                         {
                             dataGridView1.Rows.Add(new string[] { ";", "punto y coma", "id: 2" });
+                        }
+
+                        else if (myChar == ',')
+                        {
+                            dataGridView1.Rows.Add(new string[] { ",", "coma", "id: 3" });
                         }
 
                         else if (myChar == '+')
@@ -228,7 +245,7 @@ namespace Tarea1
                         }
                         else
                         {
-                            dataGridView1.Rows.Add(new string[] { union, "Entero", "id: " });
+                            dataGridView1.Rows.Add(new string[] { union, "Entero", "id: 13" });
                             union = null;
                             counter--;
                             myState = States.Start;
@@ -247,12 +264,35 @@ namespace Tarea1
                         {
                             if (reservedWords.Contains(union))
                             {
-                                dataGridView1.Rows.Add(new string[] { union, "reservada", "id:" });
+                                if (union == "if")
+                                {
+                                    dataGridView1.Rows.Add(new string[] { union, "if", "id:9" });
+                                }
+
+                                else if (union == "else")
+                                {
+                                    dataGridView1.Rows.Add(new string[] { union, "else", "id:12" });
+                                }
+
+                                else if (union == "return")
+                                {
+                                    dataGridView1.Rows.Add(new string[] { union, "return", "id:11" });
+                                }
+
+                                else if (union == "while")
+                                {
+                                    dataGridView1.Rows.Add(new string[] { union, "while", "id:10" });
+                                }
+
+                                else
+                                {
+                                    dataGridView1.Rows.Add(new string[] { union, "reservada", "id:" });
+                                }
                             }
 
                             else if (Types.Contains(union))
                             {
-                                dataGridView1.Rows.Add(new string[] { union, "tipo", "id:" });
+                                dataGridView1.Rows.Add(new string[] { union, "tipo", "id:0" });
                             }
                             else
                             {
@@ -276,7 +316,7 @@ namespace Tarea1
 
                         else
                         {
-                            dataGridView1.Rows.Add(new string[] { union, "error", "id:1" });
+                            dataGridView1.Rows.Add(new string[] { union, "error", "id:-1" });
                             union = null;
                             myState = States.Start;
                         }
@@ -292,7 +332,7 @@ namespace Tarea1
 
                         else
                         {
-                            dataGridView1.Rows.Add(new string[] { union, "float", "id:" });
+                            dataGridView1.Rows.Add(new string[] { union, "float", "id:13" });
                             union = null;
                             myState = States.Start;
                             counter--;
@@ -305,18 +345,18 @@ namespace Tarea1
                         if(myChar == '=')
                         {
                             union += myChar;
-                            dataGridView1.Rows.Add(new string[] { union, "mayor igual", "id:" });                           
+                            dataGridView1.Rows.Add(new string[] { union, "mayor igual", "id:17" });                           
                         }
 
                         else if(Char.IsLetterOrDigit(myChar) || Char.IsWhiteSpace(myChar))
                         {
-                            dataGridView1.Rows.Add(new string[] { union, "mayor que", "id:" });                           
+                            dataGridView1.Rows.Add(new string[] { union, "mayor que", "id:17" });                           
                             counter--;
                         }
                         else
                         {
                             union += myChar;
-                            dataGridView1.Rows.Add(new string[] { union, "error", "id:1" });
+                            dataGridView1.Rows.Add(new string[] { union, "error", "id:-1" });
                         }
 
                         union = null;
@@ -329,18 +369,18 @@ namespace Tarea1
                         if (myChar == '=')
                         {
                             union += myChar;
-                            dataGridView1.Rows.Add(new string[] { union, "menor igual", "id:" });
+                            dataGridView1.Rows.Add(new string[] { union, "menor igual", "id:17" });
                         }
 
                         else if (Char.IsLetterOrDigit(myChar) || Char.IsWhiteSpace(myChar))
                         {
-                            dataGridView1.Rows.Add(new string[] { union, "menor que", "id:" });
+                            dataGridView1.Rows.Add(new string[] { union, "menor que", "id:17" });
                             counter--;
                         }
                         else
                         {
                             union += myChar;
-                            dataGridView1.Rows.Add(new string[] { union, "error", "id:1" });
+                            dataGridView1.Rows.Add(new string[] { union, "error", "id:-1" });
                         }
 
                         union = null;
@@ -357,7 +397,7 @@ namespace Tarea1
                         }
                         else
                         {
-                            dataGridView1.Rows.Add(new string[] { union, "error", "id:1" });
+                            dataGridView1.Rows.Add(new string[] { union, "error", "id:-1" });
                             counter--;
                         }
                         union = null;
@@ -392,7 +432,26 @@ namespace Tarea1
 
                         else
                         {
+                            counter--;
                             dataGridView1.Rows.Add(new string[] { union, "asignacion", "id:8" });
+                        }
+
+                        union = null;
+                        myState = States.Start;
+                        break;
+
+                    case States.Different:
+
+                        if(myChar == '=')
+                        {
+                            union += myChar;
+                            dataGridView1.Rows.Add(new string[] { union, "diferente de", "id:18" });
+                        }
+
+                        else
+                        {
+                            dataGridView1.Rows.Add(new string[] { union, "negacion", "id:18" });
+                            counter--;
                         }
 
                         union = null;
@@ -408,7 +467,6 @@ namespace Tarea1
             {
                 checkLastIteration(union);
             }
-            txtBoxFirst.Text = data;
             
             
         }
